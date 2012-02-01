@@ -29,7 +29,6 @@ void AudioFormatBuilder::buildFormat(){
     format.setCodec(Constants::AudioCodec);
 
     isBuilded = true;
-    qDebug() << "[lol]";
 }
 
 void showWarningFormatNotSupperted(){

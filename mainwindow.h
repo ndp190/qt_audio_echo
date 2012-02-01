@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 #include "io/audioReader.h"
+#include "io/audioWriter.h"
+
 #include "ui_mainwindow.h"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow {
@@ -23,8 +25,10 @@ private slots:
 private:
     void centerOnScreen();
     void initAudioReader();
+    void initAudioWriter();
 
     AudioReader* audioReader;
+    AudioWriter* audioWriter;
 };
 
 #endif // MAINWINDOW_H

@@ -14,7 +14,7 @@ const QAudioFormat::SampleType AudioSampleType = QAudioFormat::SignedInt;
 const QAudioFormat::Endian     AudioByteOrder  = QAudioFormat::LittleEndian;
 
 const int AudioBufferSize = 16384;
-const int AudioFrequency  = 8000;
+const int AudioFrequency  = 44100;
 const int AudioChannels   = 2;
 const int AudioSampleSize = 16;
 const QString AudioCodec  = "audio/pcm";

@@ -4,7 +4,12 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     setupUi(this);
     centerOnScreen();
+
     initAudioReader();
+    initAudioWriter();
+
+    connect(audioReader, SIGNAL(dataUpdated(const char*,int)),
+            audioWriter, SLOT(writeData(const char*,int)));
 }
 
 void MainWindow::centerOnScreen(){
@@ -37,6 +42,10 @@ void MainWindow::initAudioReader(){
 
     connect(audioReader, SIGNAL(levelUpdated(qreal)),
             this, SLOT(onInputLevelUpdated(qreal)));
+}
+
+void MainWindow::initAudioWriter(){
+    audioWriter = new AudioWriter(this);
 }
 
 void MainWindow::onInputLevelUpdated(qreal value){

@@ -23,11 +23,16 @@ public:
 
 private:
     void createAudioInput();
+    void onBufferFilled();
+    void calculateLevel();
 
     qreal maxLevel;
     qreal minLevel;
 
     quint16 maxAmplitude;
+    qreal currentLevel;
+
+    QByteArray buffer;
 
     QAudioDeviceInfo audioDeviceInfo;
     QIODevice* audioDevice;

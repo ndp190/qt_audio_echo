@@ -7,11 +7,11 @@
 
 AudioReader::AudioReader(QObject *parent)
     : QObject(parent),
-      audioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()),
-      audioInput(0),
-      minLevel(Constants::InputMinLevel),
       maxLevel(Constants::InputMaxLevel),
-      maxAmplitude(Constants::InputMaxAmplitude) {
+      minLevel(Constants::InputMinLevel),
+      maxAmplitude(Constants::InputMaxAmplitude),
+      audioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()),
+      audioInput(0) {
 
     audioFormat = AudioFormatBuilder::getAudioFormat();
     createAudioInput();
@@ -31,9 +31,29 @@ void AudioReader::createAudioInput(){
 }
 
 void AudioReader::onReadyRead(void){
+    buffer = audioDevice->read(Constants::AudioBufferSize);
 
-    const QByteArray buffer = audioDevice->read(Constants::AudioBufferSize);
+    onBufferFilled();
+}
 
+void AudioReader::onBufferFilled(){
+    calculateLevel();
+
+    if ((currentLevel>=minLevel)
+     && (currentLevel<=maxLevel)){
+
+        emit levelUpdated(currentLevel);
+        emit dataUpdated(buffer.data(), buffer.size());
+    } else {
+        if (currentLevel>maxLevel){
+            emit levelUpdated(maxLevel);
+        } else {
+            emit levelUpdated(0.0);
+        }
+    }
+}
+
+void AudioReader::calculateLevel(){
     Q_ASSERT(audioFormat.sampleSize() % 8 == 0);
 
     const int channelBytes = audioFormat.sampleSize() / 8;
@@ -55,20 +75,7 @@ void AudioReader::onReadyRead(void){
     }
 
     currentMaxAmplitude = qMin(currentMaxAmplitude, maxAmplitude);
-    qreal currentLevel = qreal(currentMaxAmplitude)/maxAmplitude;
-
-    if ((currentLevel>=minLevel)
-     && (currentLevel<=maxLevel)){
-
-        emit levelUpdated(currentLevel);
-        emit dataUpdated(buffer.data(), buffer.size());
-    } else {
-        if (currentLevel>maxLevel){
-            emit levelUpdated(maxLevel);
-        } else {
-            emit levelUpdated(0.0);
-        }
-    }
+    currentLevel = qreal(currentMaxAmplitude)/maxAmplitude;
 }
 
 void AudioReader::stateChanged(QAudio::State state){

@@ -34,6 +34,9 @@ private:
 
     QByteArray buffer;
 
+    int readSizeNeeded;
+    int readSizeLeft;
+
     QAudioDeviceInfo audioDeviceInfo;
     QIODevice* audioDevice;
     QAudioFormat audioFormat;

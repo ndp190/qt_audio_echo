@@ -10,6 +10,8 @@ AudioReader::AudioReader(QObject *parent)
       maxLevel(Constants::InputMaxLevel),
       minLevel(Constants::InputMinLevel),
       maxAmplitude(Constants::InputMaxAmplitude),
+      readSizeNeeded(Constants::AudioBufferSize),
+      readSizeLeft(readSizeNeeded),
       audioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()),
       audioInput(0) {
 
@@ -31,9 +33,22 @@ void AudioReader::createAudioInput(){
 }
 
 void AudioReader::onReadyRead(void){
-    buffer = audioDevice->read(Constants::AudioBufferSize);
+
+    while (readSizeLeft > 0){
+        const QByteArray l_buffer = audioDevice->read(readSizeLeft);
+
+        if (l_buffer.size()==0) continue;
+
+        int appendSize = qMin(l_buffer.size(), readSizeLeft);
+
+        buffer.append(l_buffer.constData(), appendSize);
+        readSizeLeft -= appendSize;
+    }
 
     onBufferFilled();
+    readSizeLeft = readSizeNeeded;
+    buffer.clear();
+
 }
 
 void AudioReader::onBufferFilled(){

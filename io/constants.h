@@ -13,7 +13,7 @@ const qreal InputMinLevel = 0.1;
 const QAudioFormat::SampleType AudioSampleType = QAudioFormat::SignedInt;
 const QAudioFormat::Endian     AudioByteOrder  = QAudioFormat::LittleEndian;
 
-const int AudioBufferSize = 16384;
+const int AudioBufferSize = 1880*6;
 const int AudioFrequency  = 44100;
 const int AudioChannels   = 2;
 const int AudioSampleSize = 16;
